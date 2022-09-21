@@ -458,8 +458,8 @@ function swap (arr, a, b) {
 function selectionSort (arr) {
   var len = arr.length
   var min = null
-  for (var i = 0; i < len; i++) {
-    min = 0 // 假设当前位置为最小值
+  for (var i = 0; i < len - 1; i++) {
+    min = i // 假设当前位置为最小值
     for (var j = i + 1; j < len; j++) { // 检查数组其余部分是否比假设值更小
       if (arr[j] < arr[min]) {
         min = j
