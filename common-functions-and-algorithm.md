@@ -7,6 +7,8 @@
   - [节流函数](#节流函数)
   - [compose 函数](#compose-函数)
   - [pipe 函数](#pipe-函数)
+  - [数组转树状结构](#数组转树状结构)
+  - [树状结构扁平化](#树状结构扁平化)
 - [模拟实现](#模拟实现)
   - [bind](#bind)
   - [call](#call)
@@ -291,6 +293,56 @@ function pipe () {
       return cb(ret)
     }, val)
   }
+}
+```
+
+### 数组转树状结构
+```javascript
+// 递归版
+function listToTree (list, idValue, key, parentKey) {
+  const ret = []
+  const temp = list.filter(v => v[parentKey] === idValue)
+  temp.forEach(item => {
+    ret.push({
+      ...item,
+      children: listToTree(list, item[key], key, parentKey)
+    })
+  })
+  return ret
+}
+
+// 循环版
+function makeTree (treeNodes, key = 'id', parentKey = 'parentId') {
+  // Map<number|string, TreeNode>
+  const nodesMap = new Map(
+    treeNodes.map(node => [node[key], node])
+  )
+
+  const virtualRoot = {}
+  treeNodes.forEach(node => {
+    const parent = nodesMap.get(node[parentKey]) || virtualRoot
+    if (!parent.children) {
+      parent.children = []
+    }
+    parent.children.push(node)
+  })
+  return virtualRoot.children || []
+}
+```
+
+### 树状结构扁平化
+```javascript
+function flatten (arr, childKey) {
+  let ret = []
+  for (let i = 0; i < arr.length; i++) {
+    const item = arr[i]
+    const child = childKey ? item[childKey] : item // 默认数组嵌套数组
+    if (Array.isArray(child)) {
+      ret = ret.concat(flatten(child, childKey))
+    }
+    ret.push(item)
+  }
+  return ret
 }
 ```
 
